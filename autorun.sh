@@ -3,6 +3,12 @@
 # invoke insmod with all arguments we got
 # and use a pathname, as insmod doesn't look in . by default
 
+# Quick hack to get systems using kernels 5.6.6 and higher to apply the patch so they'll be able to compile right
+PATCH_MINIMUM=566
+CURRENT_KERNEL=$(uname -r | awk -F- '{ print $1 }' | tr -d ".")
+
+[[ ${CURRENT_KERNEL} -ge ${PATCH_MINUMUM} ]] && $(echo "Applying patch for kernels 5.6.6 & higher" ; patch -p0 < r8168-kernel_5.5.6_and_higher_fixes.patch)
+
 TARGET_PATH=$(find /lib/modules/$(uname -r)/kernel/drivers/net/ethernet -name realtek -type d)
 if [ "$TARGET_PATH" = "" ]; then
 	TARGET_PATH=$(find /lib/modules/$(uname -r)/kernel/drivers/net -name realtek -type d)

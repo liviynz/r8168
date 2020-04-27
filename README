@@ -7,6 +7,8 @@
 	- Kernel source tree (supported Linux kernel 2.6.x and 2.4.x)
 	- For linux kernel 2.4.x, this driver supports 2.4.20 and latter.
 	- Compiler/binutils for kernel compilation
+	** The autorun.sh has been modified to automatically apply a patch if your kernel is 5.6.6 or higher **
+	** This means the driver will compile fine when this release would have been broken.     <Liviy>     **
 
 <Quick install with proper kernel settings>
 	Unpack the tarball :

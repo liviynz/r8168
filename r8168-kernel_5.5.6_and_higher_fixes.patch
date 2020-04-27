@@ -1,0 +1,50 @@
+diff -Naur src/r8168.h ../r8168-kernel_5.6.6/src/r8168.h
+--- src/r8168.h	2020-04-26 23:12:46.958729802 +1200
++++ ../r8168-kernel_5.6.6/src/r8168.h	2020-04-27 15:16:03.007665254 +1200
+@@ -335,7 +335,7 @@
+ #define DASH_SUFFIX ""
+ #endif
+ 
+-#define RTL8168_VERSION "8.048.02" NAPI_SUFFIX FIBER_SUFFIX REALWOW_SUFFIX DASH_SUFFIX
++#define RTL8168_VERSION "8.048.02-liviy" NAPI_SUFFIX FIBER_SUFFIX REALWOW_SUFFIX DASH_SUFFIX
+ #define MODULENAME "r8168"
+ #define PFX MODULENAME ": "
+ 
+diff -Naur src/r8168_n.c ../r8168-kernel_5.6.6/src/r8168_n.c
+--- src/r8168_n.c	2020-04-26 23:12:46.967729963 +1200
++++ ../r8168-kernel_5.6.6/src/r8168_n.c	2020-04-27 15:14:26.238889675 +1200
+@@ -456,7 +456,7 @@
+ static void rtl8168_hw_start(struct net_device *dev);
+ static int rtl8168_close(struct net_device *dev);
+ static void rtl8168_set_rx_mode(struct net_device *dev);
+-static void rtl8168_tx_timeout(struct net_device *dev);
++static void rtl8168_tx_timeout(struct net_device *dev, unsigned int txqueue);
+ static struct net_device_stats *rtl8168_get_stats(struct net_device *dev);
+ static int rtl8168_rx_interrupt(struct net_device *, struct rtl8168_private *, napi_budget);
+ static int rtl8168_change_mtu(struct net_device *dev, int new_mtu);
+@@ -1616,11 +1616,11 @@
+         return single_open(file, show, dev);
+ }
+ 
+-static const struct file_operations rtl8168_proc_fops = {
+-        .open           = rtl8168_proc_open,
+-        .read           = seq_read,
+-        .llseek         = seq_lseek,
+-        .release        = single_release,
++static const struct proc_ops rtl8168_proc_fops = {
++        .proc_open           = rtl8168_proc_open,
++        .proc_read           = seq_read,
++        .proc_lseek         = seq_lseek,
++        .proc_release        = single_release,
+ };
+ #endif
+ 
+@@ -27849,7 +27849,7 @@
+ }
+ 
+ static void
+-rtl8168_tx_timeout(struct net_device *dev)
++rtl8168_tx_timeout(struct net_device *dev, unsigned int txqueue)
+ {
+         struct rtl8168_private *tp = netdev_priv(dev);
+         unsigned long flags;
